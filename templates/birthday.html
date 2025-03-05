@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Atul!</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+        }
+        .hover-item {
+            position: absolute;
+            font-size: 5vw;
+            user-select: none;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.7;
+            transition: transform 0.3s ease;
+        }
+        .center-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+            cursor: pointer;
+        }
+        .center-message h1 {
+            color: white;
+            font-size: 3vw;
+            margin-bottom: 20px;
+        }
+        .center-message p {
+            color: white;
+            font-size: 1.5vw;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Music (Hidden by default) -->
+    <audio id="birthdayMusic" loop>
+        <source src="/static/happy_birthday.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <div class="center-message" id="startButton">
+        <h1>Happy Birthday, Atul!</h1>
+        <p>Tap Anywhere to Celebrate!</p>
+    </div>
+
+    <script>
+        const audio = document.getElementById("birthdayMusic");
+        const startButton = document.getElementById("startButton");
+
+        // Play audio on first user interaction
+        function startMusic() {
+            audio.play().then(() => {
+                console.log("Music started");
+            }).catch(error => {
+                console.log("Audio play failed:", error);
+            });
+
+            // Remove event listener after first tap
+            document.body.removeEventListener("click", startMusic);
+        }
+
+        // Listen for user interaction
+        document.body.addEventListener("click", startMusic);
+
+        class HoverItem {
+            constructor(content) {
+                this.content = content;
+                this.element = this.create();
+                this.reset();
+            }
+
+            create() {
+                const element = document.createElement('div');
+                element.classList.add('hover-item');
+                element.textContent = this.content;
+                document.body.appendChild(element);
+                return element;
+            }
+
+            reset() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = Math.random() * window.innerHeight;
+                this.vx = (Math.random() - 0.5) * 3;
+                this.vy = (Math.random() - 0.5) * 3;
+                const size = Math.random() * 4 + 2;
+                this.element.style.fontSize = `${size}vw`;
+                this.rotation = Math.random() * 360;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.rotation += 0.5;
+                this.element.style.transform = `translate(${this.x}px, ${this.y}px) rotate(${this.rotation}deg)`;
+                if (this.x < 0 || this.x > window.innerWidth) this.vx *= -1;
+                if (this.y < 0 || this.y > window.innerHeight) this.vy *= -1;
+            }
+        }
+
+        const hoverItems = [];
+        const contents = ['🎂', '🎉', '🎈', '✨', '🎁', '🥳', 'HAPPY', 'BIRTHDAY', 'ATUL', 'CELEBRATE', '🍰', '🎊', '🌟', '🚀', '🎇', '🎆', 'AWESOME', 'YEAR', 'AHEAD', 'KING'];
+
+        for (let i = 0; i < 30; i++) {
+            const content = contents[Math.floor(Math.random() * contents.length)];
+            hoverItems.push(new HoverItem(content));
+        }
+
+        function animate() {
+            hoverItems.forEach(item => item.update());
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            hoverItems.forEach(item => item.reset());
+        });
+
+        function createFireworks() {
+            for (let i = 0; i < 5; i++) {
+                const firework = document.createElement('div');
+                firework.style.position = 'fixed';
+                firework.style.left = `${Math.random() * 100}%`;
+                firework.style.top = `${Math.random() * 100}%`;
+                firework.style.fontSize = `${Math.random() * 3 + 2}vw`;
+                firework.textContent = '🎆';
+                
+                document.body.appendChild(firework);
+
+                firework.animate([
+                    { transform: 'scale(0) rotate(0deg)', opacity: 0 },
+                    { transform: 'scale(2) rotate(360deg)', opacity: 1 },
+                    { transform: 'scale(0) rotate(720deg)', opacity: 0 }
+                ], {
+                    duration: 2000 + Math.random() * 2000,
+                    iterations: 3,
+                    delay: Math.random() * 1000
+                }).onfinish = () => {
+                    document.body.removeChild(firework);
+                };
+            }
+        }
+
+        setInterval(createFireworks, 5000);
+    </script>
+</body>
+</html>
